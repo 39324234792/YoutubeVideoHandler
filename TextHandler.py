@@ -3,7 +3,6 @@ def clippers(x, clip, mLineLength):
     while x[mLineLength] != ' ':
         mLineLength -= 1
     clip.append(x[:mLineLength])
-    print(x[:mLineLength])
     if len(x[mLineLength:]) >= realMLineLength:
         clip = clippers(x[mLineLength+1:], clip, realMLineLength)
     else:
