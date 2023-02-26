@@ -25,17 +25,6 @@ window.onload = () => {
     }
 }
 
-const setError = (message) => {
-    clearAudio()
-    document.getElementById('error').style.display = 'block'
-    document.getElementById('errortext').innerHTML = message
-}
-
-const clearError = () => {
-    document.getElementById('error').style.display = 'none'
-    document.getElementById('errortext').innerHTML = 'There was an error.'
-}
-
 const setAudio = (base64, text) => {
     document.getElementById('success').style.display = 'block'
     document.getElementById('audio').src = `data:audio/mpeg;base64,${base64}`
@@ -48,36 +37,7 @@ const clearAudio = () => {
     document.getElementById('generatedtext').innerHTML = ''
 }
 
-const disableControls = () => {
-    document.getElementById('text').setAttribute('disabled', '')
-    document.getElementById('voice').setAttribute('disabled', '')
-    document.getElementById('submit').setAttribute('disabled', '')
-}
-
-const enableControls = () => {
-    document.getElementById('text').removeAttribute('disabled')
-    document.getElementById('voice').removeAttribute('disabled')
-    document.getElementById('submit').removeAttribute('disabled')
-}
-
-const onTextareaInput = () => {
-    const text = document.getElementById('text').value
-    const textEncoded = textEncoder.encode(text)
-
-    if (textEncoded.length > TEXT_BYTE_LIMIT) {
-        document.getElementById('charcount').style.color = 'red'
-    } else {
-        document.getElementById('charcount').style.color = 'black'
-    }
-}
-
 const submitForm = () => {
-    clearError()
-    clearAudio()
-
-    disableControls()
-
-    // let text = document.getElementById('text').value
     let text = "hello my friends"
     const textLength = new TextEncoder().encode(text).length
     console.log(textLength)
