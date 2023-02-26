@@ -77,22 +77,15 @@ const submitForm = () => {
 
     disableControls()
 
-    let text = document.getElementById('text').value
-    // let text = "hello my friends"
+    // let text = document.getElementById('text').value
+    let text = "hello my friends"
     const textLength = new TextEncoder().encode(text).length
     console.log(textLength)
 
-    if (textLength === 0) text = 'The fungus among us.'
     const voice = document.getElementById('voice').value
 
     if(voice == "none") {
         setError("No voice has been selected");
-        enableControls()
-        return
-    }
-
-    if (textLength > TEXT_BYTE_LIMIT) {
-        setError(`Text must not be over ${TEXT_BYTE_LIMIT} UTF-8 characters (currently at ${textLength})`)
         enableControls()
         return
     }
