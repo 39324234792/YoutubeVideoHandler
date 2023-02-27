@@ -1,7 +1,7 @@
 import moviepy.editor as mp
-# import vtest as audioHandler
-import math
 import TextHandler as TxtHandler
+# import vtest
+import pyttsx3
 
 
 def video(audio=None):
@@ -26,16 +26,18 @@ def vidClipHandler(length, audioText):
 
 def getText():
     f = open("txtFiles/holder.txt", "r", encoding="utf-8")
-    maxLineLength = 100
+    maxLineLength = 50
     content = TxtHandler.clipText(f, maxLineLength)
     for x in content:
         print(x)
+    return content
 
 
 def getAudio():
     pass
-    # audioHandler.audioGen("pass", "null")
+    # audioGen("pass", "null")
 
 
-getText()
+# audioGen("test_audio", "Hello world")
+# getText()
 # vidClipHandler()

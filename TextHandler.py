@@ -1,20 +1,12 @@
-def clippers(x, clip, mLineLength):
-    realMLineLength = mLineLength
-    while x[mLineLength] != ' ':
-        mLineLength -= 1
-    clip.append(x[:mLineLength])
-    if len(x[mLineLength:]) >= realMLineLength:
-        clip = clippers(x[mLineLength+1:], clip, realMLineLength)
-    else:
-        clip.append(x[mLineLength+1:])
-    return clip
+import moviepy.editor as mp
 
 
-def clipText(f, maxLineLength):
-    content = ''
-    clips = []
-    for x in f:
-        x.strip()
-        x = x.replace('\n', '')
-        content += x
-    return clippers(content, clips, maxLineLength)
+def video(audio=None):
+    clip = mp.VideoFileClip("BackgroundVideos/scaryBGTrim.mp4")
+    txt_clip = mp.TextClip("GeeksforGeeks", fontsize=75, color='white')
+    txt = mp.TextClip("GoodGeeks ", fontsize=75, color='white')
+    txt_clip = txt_clip.set_pos('center').set_duration(0, 10)
+    txt_clip2 = txt.set_pos('left').set_duration(10, 30)
+    final_clip = mp.CompositeVideoClip([clip, txt_clip])
+    final_clip.write_videofile("NewVideos/my_new_video.mp4")
+    final_clip.close()
