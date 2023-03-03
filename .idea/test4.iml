@@ -7,5 +7,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="AppLuncher" />
+    <orderEntry type="module" module-name="TensorFlowTTSTest" />
+    <orderEntry type="module" module-name="LoveLetter" />
   </component>
 </module>

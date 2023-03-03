@@ -1,20 +1,22 @@
-import moviepy.editor as mp
+from moviepy.editor import *
 import TextHandler as TxtHandler
-# import vtest
-import pyttsx3
+import audioHandler
 
 
-def video(audio=None):
-    clip = mp.VideoFileClip("BackgroundVideos/scaryBGTrim.mp4")
+def videoS(audio=None):
+    videoA = VideoFileClip("BackgroundVideos/minecraftBG2.mp4").subclip(1, 11)
+    textA = TextClip("text 1", fontsize=50, color='white')
+    text2A = textA.set_pos('center').set_duration(10)
+    video2A = CompositeVideoClip([videoA, text2A])
+    # video2A.write_videofile('NewVideos/text1.mp4')
 
-    txt_clip = mp.TextClip("GeeksforGeeks", fontsize=75, color='white')
-    txt = mp.TextClip("GoodGeeks ", fontsize=75, color='white')
-
-    txt_clip = txt_clip.set_pos('center').set_duration(0, 10)
-    txt_clip2 = txt.set_pos('left').set_duration(10, 30)
-    final_clip = mp.CompositeVideoClip([clip, txt_clip, txt_clip2])
-    final_clip.write_videofile("my_new_video.mp4")
-    final_clip.close()
+    videoB = VideoFileClip("BackgroundVideos/minecraftBG2.mp4").subclip(11, 21)
+    textB = TextClip("text 2", fontsize=50, color='white')
+    text2B = textB.set_pos('center').set_duration(10)
+    video2B = CompositeVideoClip([videoB, text2B])
+    # video2B.write_videofile('NewVideos/text2.mp4')
+    videoC = concatenate_videoclips([video2A, video2B])
+    videoC.write_videofile('NewVideos/C.mp4')
 
 
 def vidClipHandler(length, audioText):
@@ -33,11 +35,17 @@ def getText():
     return content
 
 
-def getAudio():
-    pass
-    # audioGen("pass", "null")
+def getAudio(content):
+    dict = {}
+    for x in content:
+        dict[audioHandler.get_audio(x)] = x
+    print(dict)
+
+    return dict
 
 
 # audioGen("test_audio", "Hello world")
-# getText()
+# contents = getText()
+# getAudio(contents)
 # vidClipHandler()
+videoS()
