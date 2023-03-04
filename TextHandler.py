@@ -24,4 +24,7 @@ def clipText(f, maxLineLength):
         x.strip()
         x = x.replace('\n', '')
         content += x
-    return clippers(content, clips, maxLineLength)
+
+
+
+    return clippers(content, clips, maxLineLength), content

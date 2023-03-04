@@ -3,8 +3,38 @@ import TextHandler as TxtHandler
 import audioHandler
 
 
-def videoS(audio=None):
-    videoA = VideoFileClip("BackgroundVideos/minecraftBG2.mp4").subclip(1, 11)
+def videoS(audioClips):
+    timestamp = 1
+    vidClips = []
+    start = True
+    for clip in audioClips:
+        if start:
+            start = False
+        else:
+            print(clip)
+            print(audioClips[clip])
+            audioclip = AudioFileClip(clip)
+            leng = audioclip.duration - 0.75
+            print(leng)
+
+            videoA = VideoFileClip("BackgroundVideos/minecraftBG2.mp4").subclip(timestamp, timestamp+leng)
+
+            textA = TextClip(audioClips[clip], fontsize=50, color='white')
+            text2A = textA.set_pos('center').set_duration(leng)
+
+            video2A = CompositeVideoClip([videoA, text2A])
+            video2A.write_videofile(f'NewVideos/{timestamp}.mp4')
+            timestamp += leng
+            vidClips.append(video2A)
+
+    videoC = concatenate_videoclips(vidClips)
+    audioclip = AudioFileClip(str(list(audioClips.keys())[0]))
+    videoC = videoC.set_audio(audioclip)
+    videoC.write_videofile(f'NewVideos/final.mp4')
+
+
+
+    '''videoA = VideoFileClip("BackgroundVideos/minecraftBG2.mp4").subclip(1, 11)
     textA = TextClip("text 1", fontsize=50, color='white')
     text2A = textA.set_pos('center').set_duration(10)
     video2A = CompositeVideoClip([videoA, text2A])
@@ -16,7 +46,7 @@ def videoS(audio=None):
     video2B = CompositeVideoClip([videoB, text2B])
     # video2B.write_videofile('NewVideos/text2.mp4')
     videoC = concatenate_videoclips([video2A, video2B])
-    videoC.write_videofile('NewVideos/C.mp4')
+    videoC.write_videofile('NewVideos/C.mp4')'''
 
 
 def vidClipHandler(length, audioText):
@@ -29,9 +59,8 @@ def vidClipHandler(length, audioText):
 def getText():
     f = open("txtFiles/holder.txt", "r", encoding="utf-8")
     maxLineLength = 50
-    content = TxtHandler.clipText(f, maxLineLength)
-    for x in content:
-        print(x)
+    content, fullString = TxtHandler.clipText(f, maxLineLength)
+    content.insert(0, fullString)
     return content
 
 
@@ -39,13 +68,12 @@ def getAudio(content):
     dict = {}
     for x in content:
         dict[audioHandler.get_audio(x)] = x
-    print(dict)
-
     return dict
 
 
+# def omg
 # audioGen("test_audio", "Hello world")
-# contents = getText()
-# getAudio(contents)
+contents = getText()
+getAudio(contents)
 # vidClipHandler()
-videoS()
+#videoS(getAudio(getText()))
