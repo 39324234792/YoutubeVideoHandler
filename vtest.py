@@ -1,37 +1,54 @@
-import audioread
+import requests
+import json
+import base64
+import os
+import shutil
 
 
-def duration_detector(length):
-    hours = length // 3600  # calculate in hours
-    length %= 3600
-    mins = length // 60  # calculate in minutes
-    length %= 60
-    seconds = length  # calculate in seconds
-
-    return hours, mins, seconds
-
-
-def audioLen(file):
-    with audioread.audio_open(file) as f:
-        totalsec = f.duration
-    print(totalsec)
-    return totalsec
-    # hours, mins, seconds = duration_detector(int(totalsec))
-    # print('Total Duration: {}:{}:{}'.format(hours, mins, seconds))
+def get_audio(text, voice='en_us_001', reset=False):
+    global fileNumber
+    if reset:
+        fileNumber = 0
+    fileNumber += 1
+    payload = {'text': text, 'voice': voice}
+    payload = json.dumps(payload)
+    r = requests.post(url, data=payload, headers={'Content-Type': 'application/json'})
+    response = json.loads(r.text)
+    wav_file = open(f"audio_files/{fileNumber}.wav", "wb")
+    decodedData = base64.b64decode(response['data'])
+    wav_file.write(decodedData)
+    wav_file.close()
+    return f"audio_files/{fileNumber}.wav"
 
 
-def start(l):
-    s = True
-    for x in l:
-        if s:
-            s = False
-        else:
-            print(x)
+def resetAudioFolder(clear=False):
+    if clear:
+        folder = 'C:/Users/18043/PycharmProjects/test4/audio_files'
+        for filename in os.listdir(folder):
+            file_path = os.path.join(folder, filename)
+            try:
+                if os.path.isfile(file_path) or os.path.islink(file_path):
+                    os.unlink(file_path)
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)
+            except Exception as e:
+                print('Failed to delete %s. Reason: %s' % (file_path, e))
 
 
-dic = {
-    'hello':"world",
-    'bye': "earth"
-}
+url = 'https://tiktok-tts.weilnet.workers.dev/api/generation'
+fileNumber = 0
 
-print(str(list(dic.keys())[0]))
+audios = [
+    "en_us_001",
+    "en_us_007",
+    "en_au_001",
+]
+
+f = open("txtFiles/holder.txt", "r", encoding="utf-8")
+content = ''
+for x in f:
+    x.strip()
+    x = x.replace('\n', '')
+    content += x
+for voice in audios:
+    get_audio(content, voice)
