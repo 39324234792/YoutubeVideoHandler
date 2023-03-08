@@ -20,11 +20,10 @@ def clippers(x, clip, mLineLength):
 def clipText(f, maxLineLength):
     content = ''
     clips = []
+    clips2 = []
     for x in f:
         x.strip()
         x = x.replace('\n', '')
         content += x
 
-
-
-    return clippers(content, clips, maxLineLength), content
+    return clippers(content, clips, maxLineLength), clippers(content, clips2, 250), content

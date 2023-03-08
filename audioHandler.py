@@ -5,7 +5,7 @@ import os
 import shutil
 
 
-def get_audio(text, voice='en_us_001', reset=False):
+def get_audio(text, voice='en_us_001', fullStr=False, reset=False):
     global fileNumber
     if reset:
         fileNumber = 0
@@ -14,16 +14,22 @@ def get_audio(text, voice='en_us_001', reset=False):
     payload = json.dumps(payload)
     r = requests.post(url, data=payload, headers={'Content-Type': 'application/json'})
     response = json.loads(r.text)
-    wav_file = open(f"audio_files/{fileNumber}.wav", "wb")
+    if fullStr:
+        wav_file = open(f"audio_files/complete/{fileNumber}.wav", "wb")
+    else:
+        wav_file = open(f"audio_files/{fileNumber}.wav", "wb")
+    print(response)
     decodedData = base64.b64decode(response['data'])
     wav_file.write(decodedData)
     wav_file.close()
+    if fullStr:
+        return f"audio_files/complete/{fileNumber}.wav"
     return f"audio_files/{fileNumber}.wav"
 
 
-def resetAudioFolder(clear=False):
+def resetAudioFolder(path, clear=False):
     if clear:
-        folder = 'C:/Users/18043/PycharmProjects/test4/audio_files'
+        folder = path
         for filename in os.listdir(folder):
             file_path = os.path.join(folder, filename)
             try:

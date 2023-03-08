@@ -1,9 +1,13 @@
 from moviepy.editor import *
 import TextHandler as txtHandler
 import audioHandler
+import moviepy.audio.AudioClip
+import os
+import random
+import math
 
 
-def videoS(audioClips, short=True):
+def videoS(audioClips, bgVid, short=True):
     charLimit = 30
     start = True
     newAudClips = []
@@ -17,6 +21,8 @@ def videoS(audioClips, short=True):
                 if len(audioClips[clip]) >= charLimit:
                     ret = txtHandler.clippers(audioClips[clip], clips, charLimit)
                     newAudClips.append('\n'.join(ret))
+                else:
+                    newAudClips.append(audioClips[clip])
         start = True
         x = 0
         for clip in audioClips:
@@ -28,9 +34,13 @@ def videoS(audioClips, short=True):
                 x += 1
         audioClips = newAudDict
 
-    timestamp = 1
+    audioclip = AudioFileClip('audio_files/complete/final.wav')
+    testVideoClip = VideoFileClip(bgVid)
+    timestamp = math.floor(random.randint(1, testVideoClip.duration-audioclip.duration))
+    print(timestamp)
     vidClips = []
     start = True
+
     for clip in audioClips:
         if start:
             start = False
@@ -41,7 +51,7 @@ def videoS(audioClips, short=True):
             leng = audioclip.duration - 0.25
             # print(leng)
 
-            videoA = VideoFileClip("BackgroundVideos/minecraftBG1.mp4").subclip(timestamp, timestamp+leng)
+            videoA = VideoFileClip(bgVid).subclip(timestamp, timestamp+leng)
 
             textA = TextClip(audioClips[clip], fontsize=30, color='white', font='Calibri-Bold')
             # , stroke_color='black', stroke_width=1.5
@@ -52,52 +62,84 @@ def videoS(audioClips, short=True):
             vidClips.append(video2A)
 
     videoC = concatenate_videoclips(vidClips)
-    audioclip = AudioFileClip(str(list(audioClips.keys())[0]))
+    # audioclip = AudioFileClip(str(list(audioClips.keys())[0]))
     videoC = videoC.set_audio(audioclip)
     videoC.write_videofile(f'NewVideos/final.mp4')
     print(TextClip.list('font'))
 
 
-
-    '''videoA = VideoFileClip("BackgroundVideos/minecraftBG2.mp4").subclip(1, 11)
-    textA = TextClip("text 1", fontsize=50, color='white')
-    text2A = textA.set_pos('center').set_duration(10)
-    video2A = CompositeVideoClip([videoA, text2A])
-    # video2A.write_videofile('NewVideos/text1.mp4')
-
-    videoB = VideoFileClip("BackgroundVideos/minecraftBG2.mp4").subclip(11, 21)
-    textB = TextClip("text 2", fontsize=50, color='white')
-    text2B = textB.set_pos('center').set_duration(10)
-    video2B = CompositeVideoClip([videoB, text2B])
-    # video2B.write_videofile('NewVideos/text2.mp4')
-    videoC = concatenate_videoclips([video2A, video2B])
-    videoC.write_videofile('NewVideos/C.mp4')'''
-
-
-def vidClipHandler(length, audioText):
-    finalClips = []
-    dictionary = dict(zip(audioText, length))
-    for x in dictionary:
-        pass
-
-
 def getText():
     f = open("txtFiles/holder.txt", "r", encoding="utf-8")
     maxLineLength = 50
-    content, fullString = txtHandler.clipText(f, maxLineLength)
-    content.insert(0, fullString)
-    return content
+    content, fullString, str = txtHandler.clipText(f, maxLineLength)
+    # content.insert(0, fullString)
+    for x in fullString:
+        if x == '':
+            fullString.remove(x)
+    return content, fullString, str
 
 
-def getAudio(content):
+def getAudio(content, fullString, str):
+    audioHandler.resetAudioFolder('C:/Users/18043/PycharmProjects/test4/audio_files/complete', True)
     dict = {}
+    fullDict = {}
+    finalDict = {}
     for x in content:
-        dict[audioHandler.get_audio(x, "en_us_007")] = x
-    return dict
+       dict[audioHandler.get_audio(x, "en_us_007")] = x
+    for x in fullString:
+        fullDict[audioHandler.get_audio(x, "en_us_007", fullStr=True)] = x
+    # if len(fullDict) > 1:
+    #     finalDict[audioJoiner(dict)] = str
+    # else:
+    #     for x in fullDict:
+    #         finalDict['audio_files/complete/final.wav'] = fullDict[x]
+
+    finalDict[audioJoiner(fullDict)] = str
+
+    for x in dict:
+        finalDict[x] = dict[x]
+    return finalDict
 
 
-# def omg
-# audioGen("test_audio", "Hello world")
+def audioJoiner(dict):
+    clips = []
+    for x in dict:
+        clips.append(AudioFileClip(x))
+    finalClip = moviepy.audio.AudioClip.concatenate_audioclips(clips)
+    audioHandler.resetAudioFolder('C:/Users/18043/PycharmProjects/test4/audio_files/complete', True)
+    finalClip.write_audiofile('audio_files/complete/final.wav')
+    return 'audio_files/complete/final.wav'
+
+
+def getInput():
+    print("Welcome!!!")
+    while True:
+        try:
+            short = int(input("Is the video a short, [1] for yes, [0] for no: "))
+            break
+        except ValueError:
+            print("Not a valid answer, retry...")
+    if short == 0:
+        BGVideos = os.listdir('C:\\Users\\18043\\PycharmProjects\\test4\\BackgroundVideos\\long')
+        short = False
+    else:
+        BGVideos = os.listdir('C:\\Users\\18043\\PycharmProjects\\test4\\BackgroundVideos\\short')
+        short = True
+    num = 0
+    print('Background Videos:')
+    for x in BGVideos:
+        print(f'[{num}] {x}')
+        num += 1
+    while True:
+        try:
+            bgInput = int(input(""))
+            break
+        except ValueError:
+            print("Not a Int, retry...")
+
+    return BGVideos[bgInput], short
+
+
 audios = [
     "en_us_001",
     "en_us_007",
@@ -106,4 +148,11 @@ audios = [
 # contents = getText()
 # getAudio(contents)
 # vidClipHandler()
-videoS(getAudio(getText()))
+# txtClips, content, str = getText()
+# videoS(getAudio(txtClips, content, str))
+# print(getAudio(txtClips, content, str))
+bgVideo, short = getInput()
+txtClips, content, str = getText()
+videoS(getAudio(txtClips, content, str), bgVideo, short=short)
+
+
